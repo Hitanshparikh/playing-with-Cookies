@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Cookie Manager</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .cookie-form {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      border: 2px solid #e9ecef;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #495057;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      align-items: end;
+    }
+
+    .form-row > div {
+      flex: 1;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .results-section {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+
+    .results-section h3 {
+      color: #495057;
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+    }
+
+    .cookie-list {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      border: 1px solid #dee2e6;
+    }
+
+    .cookie-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid #e9ecef;
+      transition: background 0.2s ease;
+    }
+
+    .cookie-item:hover {
+      background: #f8f9fa;
+    }
+
+    .cookie-item:last-child {
+      border-bottom: none;
+    }
+
+    .cookie-info {
+      flex: 1;
+    }
+
+    .cookie-name {
+      font-weight: 600;
+      color: #495057;
+      font-size: 1.1rem;
+    }
+
+    .cookie-value {
+      color: #6c757d;
+      margin-top: 5px;
+    }
+
+    .cookie-meta {
+      font-size: 0.9rem;
+      color: #868e96;
+      margin-top: 5px;
+    }
+
+    .cookie-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+
+    .alert {
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .alert-info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid #dee2e6;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .stat-label {
+      color: #6c757d;
+      margin-top: 5px;
+    }
+
+    /* Assistant Styles */
+    .assistant-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .assistant-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .assistant-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100vh;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+      transition: right 0.3s ease;
+      z-index: 999;
+      overflow-y: auto;
+    }
+
+    .assistant-panel.active {
+      right: 0;
+    }
+
+    .assistant-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 1001;
+    }
+
+    .assistant-content {
+      padding: 20px;
+    }
+
+    .assistant-section {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #dee2e6;
+    }
+
+    .assistant-section h4 {
+      color: #495057;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .assistant-section p {
+      color: #6c757d;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .code-example {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 5px;
+      padding: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+
+    .feature-highlight {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+    }
+
+    .tutorial-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tutorial-btn {
+      flex: 1;
+      padding: 10px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tutorial-btn:hover {
+      background: #764ba2;
+    }
+
+    .tutorial-btn.active {
+      background: #28a745;
+    }
+
+    .demo-area {
+      background: #e3f2fd;
+      border: 2px dashed #2196f3;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    .close-assistant {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-assistant:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .assistant-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 998;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .assistant-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+      
+      .button-group {
+        justify-content: center;
+      }
+      
+      .cookie-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .cookie-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .assistant-panel {
+        width: 100%;
+        right: -100%;
+      }
+
+      .assistant-toggle {
+        bottom: 80px;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🍪 Advanced Cookie Manager</h1>
+      <p>Manage browser cookies with advanced features and beautiful UI</p>
+    </div>
+
+    <div class="content">
+      <!-- Statistics -->
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-number" id="totalCookies">0</div>
+          <div class="stat-label">Total Cookies</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="sessionCookies">0</div>
+          <div class="stat-label">Session Cookies</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="persistentCookies">0</div>
+          <div class="stat-label">Persistent Cookies</div>
+        </div>
+      </div>
+
+      <!-- Cookie Creation Form -->
+      <div class="cookie-form">
+        <h3 style="margin-bottom: 20px; color: #495057;">🍪 Create New Cookie</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cookieName">Cookie Name</label>
+            <input type="text" id="cookieName" class="form-control" placeholder="Enter cookie name" required>
+          </div>
+          <div class="form-group">
+            <label for="cookieValue">Cookie Value</label>
+            <input type="text" id="cookieValue" class="form-control" placeholder="Enter cookie value" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="expirationTime">Expiration</label>
+            <select id="expirationTime" class="form-control">
+              <option value="session">Session (Browser Close)</option>
+              <option value="3600">1 Hour</option>
+              <option value="86400">1 Day</option>
+              <option value="604800">1 Week</option>
+              <option value="2592000">1 Month</option>
+              <option value="31536000">1 Year</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div class="form-group" id="customExpirationGroup" style="display: none;">
+            <label for="customExpiration">Custom (seconds)</label>
+            <input type="number" id="customExpiration" class="form-control" placeholder="Seconds">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cookiePath">Path</label>
+            <input type="text" id="cookiePath" class="form-control" value="/" placeholder="/">
+          </div>
+          <div class="form-group">
+            <label for="cookieDomain">Domain</label>
+            <input type="text" id="cookieDomain" class="form-control" placeholder="Leave empty for current domain">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="secureFlag"> Secure (HTTPS only)
+            </label>
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="httpOnlyFlag"> HttpOnly (No JavaScript access)
+            </label>
+          </div>
+          <div class="form-group">
+            <label for="sameSite">SameSite</label>
+            <select id="sameSite" class="form-control">
+              <option value="Lax">Lax</option>
+              <option value="Strict">Strict</option>
+              <option value="None">None</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn" onclick="setCookie()">🍪 Set Cookie</button>
+          <button class="btn btn-secondary" onclick="importCookies()">📁 Import Cookies</button>
+          <button class="btn btn-success" onclick="exportCookies()">💾 Export Cookies</button>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="results-section">
+        <h3>📊 Cookie Operations</h3>
+        <div id="alertContainer"></div>
+        
+        <div class="button-group">
+          <button class="btn btn-secondary" onclick="getAllCookies()">🔍 View All Cookies</button>
+          <button class="btn btn-secondary" onclick="searchCookie()">🔎 Search Cookie</button>
+          <button class="btn btn-danger" onclick="clearAllCookies()">🗑️ Clear All Cookies</button>
+          <button class="btn btn-success" onclick="generateTestCookies()">🧪 Generate Test Data</button>
+        </div>
+      </div>
+
+      <!-- Cookie List -->
+      <div class="results-section">
+        <h3>🍪 Current Cookies</h3>
+        <div id="cookieListContainer" class="cookie-list">
+          <p style="text-align: center; color: #6c757d; padding: 20px;">No cookies found. Create some cookies to get started!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assistant Toggle Button -->
+  <button class="assistant-toggle" onclick="toggleAssistant()" title="Open Cookie Learning Assistant">
+    🎓
+  </button>
+
+  <!-- Assistant Overlay -->
+  <div class="assistant-overlay" id="assistantOverlay" onclick="closeAssistant()"></div>
+
+  <!-- Assistant Panel -->
+  <div class="assistant-panel" id="assistantPanel">
+    <div class="assistant-header">
+      <button class="close-assistant" onclick="closeAssistant()">×</button>
+      <h3>🎓 Cookie Learning Assistant</h3>
+      <p>Your guide to understanding cookies!</p>
+    </div>
+    
+    <div class="assistant-content">
+      <!-- Tutorial Navigation -->
+      <div class="tutorial-nav">
+        <button class="tutorial-btn active" onclick="showTutorial('basics')">Basics</button>
+        <button class="tutorial-btn" onclick="showTutorial('features')">Features</button>
+        <button class="tutorial-btn" onclick="showTutorial('backend')">Backend</button>
+        <button class="tutorial-btn" onclick="showTutorial('security')">Security</button>
+      </div>
+
+      <!-- Tutorial Content -->
+      <div id="tutorialContent">
+        <!-- Content will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tutorial Content Data
+    const tutorialData = {
+      basics: {
+        title: "🍪 Cookie Basics",
+        content: [
+          {
+            heading: "What are Cookies?",
+            text: "HTTP cookies are small pieces of data stored by web browsers. They're sent between the browser and server with each HTTP request.",
+            example: "Set-Cookie: username=john; Max-Age=3600; Path=/",
+            highlight: "Cookies enable websites to remember user preferences, login status, and shopping cart contents!"
+          },
+          {
+            heading: "How Cookies Work",
+            text: "1. Server sends a Set-Cookie header\n2. Browser stores the cookie\n3. Browser sends cookie back with future requests\n4. Server reads the cookie value",
+            example: "// JavaScript: document.cookie = 'theme=dark'\n// HTTP Header: Cookie: theme=dark",
+            highlight: "This creates a stateful experience over the stateless HTTP protocol."
+          },
+          {
+            heading: "Cookie Lifecycle",
+            text: "Cookies can be:\n• Session cookies (deleted when browser closes)\n• Persistent cookies (have expiration date)\n• Secure cookies (HTTPS only)\n• HttpOnly cookies (no JavaScript access)",
+            demo: "Try creating a session cookie vs a 1-hour cookie above!"
+          }
+        ]
+      },
+      features: {
+        title: "⚡ Advanced Features",
+        content: [
+          {
+            heading: "Cookie Attributes Explained",
+            text: "Each cookie attribute serves a specific purpose:",
+            example: "document.cookie = 'name=value; Max-Age=3600; Path=/; Domain=.example.com; Secure; HttpOnly; SameSite=Strict'",
+            details: [
+              "• <strong>Max-Age</strong>: How long cookie lives (in seconds)",
+              "• <strong>Path</strong>: Which URLs can access the cookie",
+              "• <strong>Domain</strong>: Which domains can access the cookie",
+              "• <strong>Secure</strong>: Only send over HTTPS connections",
+              "• <strong>HttpOnly</strong>: Prevents JavaScript access (XSS protection)",
+              "• <strong>SameSite</strong>: Controls cross-site request behavior"
+            ]
+          },
+          {
+            heading: "Import/Export Feature",
+            text: "Our cookie manager allows you to backup and restore cookies:",
+            example: "// Export format (JSON)\n[\n  {\n    \"name\": \"username\",\n    \"value\": \"john\",\n    \"exported\": \"2025-07-29T10:00:00Z\"\n  }\n]",
+            highlight: "Perfect for testing different cookie configurations or migrating user data!"
+          },
+          {
+            heading: "Real-time Statistics",
+            text: "The dashboard tracks:\n• Total cookies count\n• Session vs Persistent cookies\n• Cookie creation timestamps",
+            demo: "Watch the stats update as you create and delete cookies!"
+          },
+          {
+            heading: "Search & Filter",
+            text: "Find specific cookies quickly using the search feature. Useful when managing many cookies on complex websites.",
+            example: "// Search implementation\nfunction getCookie(name) {\n  const cookies = document.cookie.split('; ');\n  for (let cookie of cookies) {\n    const [cookieName, cookieValue] = cookie.split('=');\n    if (decodeURIComponent(cookieName) === name) {\n      return decodeURIComponent(cookieValue);\n    }\n  }\n  return null;\n}"
+          }
+        ]
+      },
+      backend: {
+        title: "🖥️ Backend Implementation",
+        content: [
+          {
+            heading: "Server-Side Cookie Handling",
+            text: "Servers manage cookies through HTTP headers:",
+            example: "// Node.js/Express example\napp.get('/', (req, res) => {\n  // Reading cookies\n  const userTheme = req.cookies.theme;\n  \n  // Setting cookies\n  res.cookie('lastVisit', new Date().toISOString(), {\n    maxAge: 24 * 60 * 60 * 1000, // 24 hours\n    httpOnly: true,\n    secure: true\n  });\n});",
+            highlight: "Server-side cookie management is crucial for security and proper state management!"
+          },
+          {
+            heading: "Database Integration",
+            text: "Cookies often work with databases for persistent storage:",
+            example: "// Session management example\napp.use(session({\n  secret: 'your-secret-key',\n  resave: false,\n  saveUninitialized: false,\n  cookie: {\n    secure: process.env.NODE_ENV === 'production',\n    maxAge: 1000 * 60 * 60 * 24 // 24 hours\n  },\n  store: new MongoStore({\n    mongooseConnection: mongoose.connection\n  })\n}));",
+            details: [
+              "• Session cookies store session IDs",
+              "• Actual data stored in database/memory",
+              "• Cookie just references the session",
+              "• More secure than storing sensitive data in cookies"
+            ]
+          },
+          {
+            heading: "Authentication Flow",
+            text: "Common pattern using cookies for authentication:",
+            example: "// Login endpoint\napp.post('/login', async (req, res) => {\n  const user = await validateUser(req.body);\n  if (user) {\n    const token = jwt.sign({userId: user.id}, SECRET);\n    res.cookie('authToken', token, {\n      httpOnly: true,\n      secure: true,\n      sameSite: 'strict',\n      maxAge: 24 * 60 * 60 * 1000\n    });\n    res.json({success: true});\n  }\n});",
+            highlight: "Never store passwords in cookies! Use secure tokens or session IDs instead."
+          },
+          {
+            heading: "Cookie Middleware",
+            text: "Middleware processes cookies automatically:",
+            example: "// Custom cookie middleware\nfunction cookieParser(req, res, next) {\n  const cookies = {};\n  if (req.headers.cookie) {\n    req.headers.cookie.split(';').forEach(cookie => {\n      const [name, value] = cookie.trim().split('=');\n      cookies[decodeURIComponent(name)] = decodeURIComponent(value);\n    });\n  }\n  req.cookies = cookies;\n  next();\n}",
+            details: [
+              "• Parses incoming cookie headers",
+              "• Makes cookies available as req.cookies",
+              "• Handles encoding/decoding automatically",
+              "• Can implement custom cookie logic"
+            ]
+          }
+        ]
+      },
+      security: {
+        title: "🔒 Security Considerations",
+        content: [
+          {
+            heading: "Common Security Threats",
+            text: "Cookies face several security challenges:",
+            details: [
+              "• <strong>XSS (Cross-Site Scripting)</strong>: Malicious scripts steal cookies",
+              "• <strong>CSRF (Cross-Site Request Forgery)</strong>: Unauthorized actions using user's cookies",
+              "• <strong>Session Hijacking</strong>: Attacker steals session cookies",
+              "• <strong>Man-in-the-Middle</strong>: Cookies intercepted over insecure connections"
+            ],
+            highlight: "Understanding these threats is crucial for secure web development!"
+          },
+          {
+            heading: "Security Best Practices",
+            text: "Protect your cookies with these practices:",
+            example: "// Secure cookie configuration\nres.cookie('sessionId', sessionId, {\n  httpOnly: true,      // Prevents XSS\n  secure: true,        // HTTPS only\n  sameSite: 'strict',  // Prevents CSRF\n  maxAge: 1800000,     // 30 minutes\n  domain: '.mysite.com' // Specific domain only\n});",
+            details: [
+              "• Always use <code>HttpOnly</code> for sensitive cookies",
+              "• Set <code>Secure</code> flag in production (HTTPS)",
+              "• Use <code>SameSite</code> to prevent CSRF attacks",
+              "• Set appropriate expiration times",
+              "• Use specific domains when possible"
+            ]
+          },
+          {
+            heading: "GDPR and Privacy",
+            text: "Legal compliance for cookie usage:",
+            example: "// Cookie consent implementation\nfunction setCookieWithConsent(name, value, options) {\n  if (hasUserConsent('analytics')) {\n    document.cookie = `${name}=${value}; ${options}`;\n  } else {\n    console.log('Cookie blocked: No user consent');\n  }\n}",
+            details: [
+              "• Essential cookies: No consent needed",
+              "• Analytics cookies: Require consent",
+              "• Marketing cookies: Explicit consent required",
+              "• Provide clear cookie policy",
+              "• Allow users to withdraw consent"
+            ]
+          },
+          {
+            heading: "Cookie Security Headers",
+            text: "Additional security through HTTP headers:",
+            example: "// Security headers middleware\napp.use((req, res, next) => {\n  res.setHeader('Set-Cookie', [\n    'sessionId=abc123; HttpOnly; Secure; SameSite=Strict',\n    'csrfToken=xyz789; Secure; SameSite=Strict'\n  ]);\n  res.setHeader('X-Content-Type-Options', 'nosniff');\n  res.setHeader('X-Frame-Options', 'DENY');\n  next();\n});",
+            highlight: "Combine cookie security with other security headers for comprehensive protection!"
+          }
+        ]
+      }
+    };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      updateCookieDisplay();
+      updateStats();
+      showTutorial('basics'); // Load default tutorial
+      
+      // Handle custom expiration visibility
+      document.getElementById('expirationTime').addEventListener('change', function() {
+        const customGroup = document.getElementById('customExpirationGroup');
+        customGroup.style.display = this.value === 'custom' ? 'block' : 'none';
+      });
+    });
+
+    // Assistant Functions
+    function toggleAssistant() {
+      const panel = document.getElementById('assistantPanel');
+      const overlay = document.getElementById('assistantOverlay');
+      
+      panel.classList.toggle('active');
+      overlay.classList.toggle('active');
+    }
+
+    function closeAssistant() {
+      const panel = document.getElementById('assistantPanel');
+      const overlay = document.getElementById('assistantOverlay');
+      
+      panel.classList.remove('active');
+      overlay.classList.remove('active');
+    }
+
+    function showTutorial(section) {
+      // Update navigation
+      document.querySelectorAll('.tutorial-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Load content
+      const data = tutorialData[section];
+      const container = document.getElementById('tutorialContent');
+      
+      let html = `<div class="assistant-section">
+        <h3>${data.title}</h3>
+      </div>`;
+
+      data.content.forEach(item => {
+        html += `<div class="assistant-section">
+          <h4>📖 ${item.heading}</h4>
+          <p>${item.text.replace(/\n/g, '<br>')}</p>`;
+        
+        if (item.example) {
+          html += `<div class="code-example">${item.example.replace(/\n/g, '<br>')}</div>`;
+        }
+        
+        if (item.highlight) {
+          html += `<div class="feature-highlight">💡 <strong>Pro Tip:</strong> ${item.highlight}</div>`;
+        }
+        
+        if (item.details) {
+          html += '<ul style="margin: 10px 0; padding-left: 20px;">';
+          item.details.forEach(detail => {
+            html += `<li style="margin: 5px 0;">${detail}</li>`;
+          });
+          html += '</ul>';
+        }
+        
+        if (item.demo) {
+          html += `<div class="demo-area">
+            🧪 <strong>Try it:</strong> ${item.demo}
+            <br><button onclick="demonstrateFeature('${section}', '${item.heading}')" 
+                      style="margin-top: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">
+              Run Demo
+            </button>
+          </div>`;
+        }
+        
+        html += '</div>';
+      });
+
+      container.innerHTML = html;
+    }
+
+    function demonstrateFeature(section, heading) {
+      const demos = {
+        'basics': {
+          'Cookie Lifecycle': () => {
+            // Create a session cookie
+            document.cookie = 'demo_session=temporary_value; path=/';
+            // Create a persistent cookie
+            document.cookie = 'demo_persistent=lasting_value; max-age=3600; path=/';
+            showAlert('Demo: Created session and persistent cookies! Check the cookie list.', 'info');
+            updateCookieDisplay();
+            updateStats();
+          }
+        },
+        'features': {
+          'Real-time Statistics': () => {
+            showAlert('Watch the statistics update as I create demo cookies...', 'info');
+            setTimeout(() => {
+              for (let i = 1; i <= 3; i++) {
+                document.cookie = `demo_stat_${i}=value${i}; max-age=3600; path=/`;
+              }
+              updateCookieDisplay();
+              updateStats();
+              showAlert('Demo complete! Notice how the stats updated automatically.', 'success');
+            }, 1000);
+          }
+        },
+        'backend': {},
+        'security': {}
+      };
+
+      const demo = demos[section] && demos[section][heading];
+      if (demo) {
+        demo();
+      } else {
+        showAlert('This demo will guide you through the main interface features!', 'info');
+        // Highlight relevant UI elements
+        highlightUIElement();
+      }
+    }
+
+    function highlightUIElement() {
+      const elements = document.querySelectorAll('.stats, .cookie-form, .cookie-list');
+      elements.forEach((el, index) => {
+        setTimeout(() => {
+          el.style.outline = '3px solid #ffc107';
+          el.style.outlineOffset = '5px';
+          setTimeout(() => {
+            el.style.outline = '';
+            el.style.outlineOffset = '';
+          }, 2000);
+        }, index * 1000);
+      });
+    }
+
+    function showAlert(message, type = 'info') {
+      const alertContainer = document.getElementById('alertContainer');
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type}`;
+      alertDiv.textContent = message;
+      
+      alertContainer.innerHTML = '';
+      alertContainer.appendChild(alertDiv);
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        alertDiv.remove();
+      }, 5000);
+    }
+
+    function setCookie() {
+      const name = document.getElementById('cookieName').value.trim();
+      const value = document.getElementById('cookieValue').value.trim();
+      const expiration = document.getElementById('expirationTime').value;
+      const customExp = document.getElementById('customExpiration').value;
+      const path = document.getElementById('cookiePath').value || '/';
+      const domain = document.getElementById('cookieDomain').value.trim();
+      const secure = document.getElementById('secureFlag').checked;
+      const httpOnly = document.getElementById('httpOnlyFlag').checked;
+      const sameSite = document.getElementById('sameSite').value;
+
+      if (!name || !value) {
+        showAlert('Cookie name and value are required!', 'error');
+        return;
+      }
+
+      let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+      
+      // Add expiration
+      if (expiration !== 'session') {
+        const maxAge = expiration === 'custom' ? customExp : expiration;
+        if (maxAge && maxAge > 0) {
+          cookieString += `; max-age=${maxAge}`;
+        }
+      }
+      
+      // Add path
+      cookieString += `; path=${path}`;
+      
+      // Add domain if specified
+      if (domain) {
+        cookieString += `; domain=${domain}`;
+      }
+      
+      // Add security flags
+      if (secure) {
+        cookieString += '; secure';
+      }
+      
+      if (httpOnly) {
+        cookieString += '; httponly';
+      }
+      
+      cookieString += `; samesite=${sameSite}`;
+
+      try {
+        document.cookie = cookieString;
+        showAlert(`Cookie '${name}' set successfully!`, 'success');
+        
+        // Clear form
+        document.getElementById('cookieName').value = '';
+        document.getElementById('cookieValue').value = '';
+        
+        updateCookieDisplay();
+        updateStats();
+        
+        // Show tutorial hint for new users
+        if (getTotalCookiesCount() === 1) {
+          showAssistantHint("Great! You've created your first cookie. Click the 🎓 button to learn more about cookie features!");
+        }
+      } catch (error) {
+        showAlert(`Error setting cookie: ${error.message}`, 'error');
+      }
+    }
+
+    function showAssistantHint(message) {
+      const hint = document.createElement('div');
+      hint.className = 'feature-highlight';
+      hint.style.position = 'fixed';
+      hint.style.top = '20px';
+      hint.style.right = '20px';
+      hint.style.zIndex = '1002';
+      hint.style.maxWidth = '300px';
+      hint.style.animation = 'slideIn 0.5s ease';
+      hint.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>💡 ${message}</span>
+          <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; font-size: 18px; cursor: pointer;">×</button>
+        </div>
+      `;
+      
+      document.body.appendChild(hint);
+      
+      setTimeout(() => {
+        if (hint.parentElement) {
+          hint.remove();
+        }
+      }, 8000);
+    }
+
+    function getTotalCookiesCount() {
+      return document.cookie.split('; ').filter(cookie => cookie.trim() !== '').length;
+    }
+
+    function getCookie(name) {
+      const cookies = document.cookie.split('; ');
+      for (let cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.split('=');
+        if (decodeURIComponent(cookieName) === name) {
+          return decodeURIComponent(cookieValue);
+        }
+      }
+      return null;
+    }
+
+    function getAllCookies() {
+      updateCookieDisplay();
+      showAlert('Cookie list refreshed!', 'info');
+    }
+
+    function searchCookie() {
+      const name = prompt('Enter cookie name to search:');
+      if (!name) return;
+      
+      const value = getCookie(name);
+      if (value) {
+        showAlert(`Cookie '${name}' found with value: ${value}`, 'success');
+        highlightCookie(name);
+      } else {
+        showAlert(`Cookie '${name}' not found!`, 'error');
+      }
+    }
+
+    function deleteCookie(name) {
+      if (confirm(`Are you sure you want to delete cookie '${name}'?`)) {
+        document.cookie = `${encodeURIComponent(name)}=; max-age=0; path=/`;
+        showAlert(`Cookie '${name}' deleted!`, 'success');
+        updateCookieDisplay();
+        updateStats();
+      }
+    }
+
+    function clearAllCookies() {
+      if (confirm('Are you sure you want to delete ALL cookies? This action cannot be undone.')) {
+        const cookies = document.cookie.split('; ');
+        for (let cookie of cookies) {
+          const cookieName = cookie.split('=')[0];
+          document.cookie = `${cookieName}=; max-age=0; path=/`;
+        }
+        showAlert('All cookies cleared!', 'success');
+        updateCookieDisplay();
+        updateStats();
+      }
+    }
+
+    function updateCookieDisplay() {
+      const container = document.getElementById('cookieListContainer');
+      const cookies = document.cookie.split('; ').filter(cookie => cookie.trim() !== '');
+      
+      if (cookies.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 20px;">No cookies found. Create some cookies to get started!</p>';
+        return;
+      }
+
+      let html = '';
+      cookies.forEach(cookie => {
+        const [name, value] = cookie.split('=');
+        const decodedName = decodeURIComponent(name);
+        const decodedValue = decodeURIComponent(value || '');
+        
+        html += `
+          <div class="cookie-item" data-cookie-name="${decodedName}">
+            <div class="cookie-info">
+              <div class="cookie-name">${decodedName}</div>
+              <div class="cookie-value">${decodedValue}</div>
+              <div class="cookie-meta">Path: / | Created: ${new Date().toLocaleString()}</div>
+            </div>
+            <div class="cookie-actions">
+              <button class="btn btn-secondary btn-small" onclick="editCookie('${decodedName}')">✏️ Edit</button>
+              <button class="btn btn-danger btn-small" onclick="deleteCookie('${decodedName}')">🗑️ Delete</button>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function updateStats() {
+      const cookies = document.cookie.split('; ').filter(cookie => cookie.trim() !== '');
+      const totalCookies = cookies.length;
+      
+      // For demo purposes, consider all cookies as persistent
+      // In a real scenario, you'd need to track expiration times
+      const sessionCookies = 0;
+      const persistentCookies = totalCookies;
+      
+      document.getElementById('totalCookies').textContent = totalCookies;
+      document.getElementById('sessionCookies').textContent = sessionCookies;
+      document.getElementById('persistentCookies').textContent = persistentCookies;
+    }
+
+    function editCookie(name) {
+      const value = getCookie(name);
+      if (value) {
+        document.getElementById('cookieName').value = name;
+        document.getElementById('cookieValue').value = value;
+        showAlert(`Cookie '${name}' loaded for editing. Modify values and click 'Set Cookie'.`, 'info');
+      }
+    }
+
+    function highlightCookie(name) {
+      const cookieItem = document.querySelector(`[data-cookie-name="${name}"]`);
+      if (cookieItem) {
+        cookieItem.style.background = '#fff3cd';
+        cookieItem.style.border = '2px solid #ffc107';
+        setTimeout(() => {
+          cookieItem.style.background = '';
+          cookieItem.style.border = '';
+        }, 3000);
+      }
+    }
+
+    function generateTestCookies() {
+      const testCookies = [
+        { name: 'user_preference', value: 'dark_mode' },
+        { name: 'language', value: 'en_US' },
+        { name: 'session_id', value: 'abc123xyz789' },
+        { name: 'cart_items', value: '3' },
+        { name: 'last_visit', value: new Date().toISOString() }
+      ];
+
+      testCookies.forEach(cookie => {
+        document.cookie = `${encodeURIComponent(cookie.name)}=${encodeURIComponent(cookie.value)}; max-age=3600; path=/`;
+      });
+
+      showAlert('Test cookies generated successfully!', 'success');
+      updateCookieDisplay();
+      updateStats();
+    }
+
+    function exportCookies() {
+      const cookies = document.cookie.split('; ').filter(cookie => cookie.trim() !== '');
+      const cookieData = cookies.map(cookie => {
+        const [name, value] = cookie.split('=');
+        return {
+          name: decodeURIComponent(name),
+          value: decodeURIComponent(value || ''),
+          exported: new Date().toISOString()
+        };
+      });
+
+      const dataStr = JSON.stringify(cookieData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `cookies_export_${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      
+      URL.revokeObjectURL(url);
+      showAlert('Cookies exported successfully!', 'success');
+    }
+
+    function importCookies() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      
+      input.onchange = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const cookieData = JSON.parse(e.target.result);
+            let imported = 0;
+            
+            cookieData.forEach(cookie => {
+              if (cookie.name && cookie.value) {
+                document.cookie = `${encodeURIComponent(cookie.name)}=${encodeURIComponent(cookie.value)}; max-age=3600; path=/`;
+                imported++;
+              }
+            });
+            
+            showAlert(`Successfully imported ${imported} cookies!`, 'success');
+            updateCookieDisplay();
+            updateStats();
+          } catch (error) {
+            showAlert('Error importing cookies: Invalid file format!', 'error');
+          }
+        };
+        reader.readAsText(file);
+      };
+      
+      input.click();
+    }
+  </script>
+</body>
+</html>
